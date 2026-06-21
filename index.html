@@ -170,6 +170,54 @@ body{
   display:none;
 }
 
+/* ================= FMDS SUB MENU ================= */
+
+.fmds-submenu{
+  display:flex;
+  gap:15px;
+  padding:12px 20px;
+  background:#ead6aa;
+  border-bottom:2px solid #ddd;
+}
+
+.fmds-tab{
+  flex:1;
+  background:#00838f;
+  color:white;
+  text-align:center;
+  padding:14px;
+  font-weight:700;
+  border-radius:8px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.fmds-tab:hover{
+  background:#006f78;
+}
+
+.fmds-tab.active{
+  background:#f28c00;
+}
+
+.fmds-submenu.hide{
+  display:none;
+}
+
+@media(max-width:768px){
+
+  .fmds-submenu{
+    gap:8px;
+    padding:8px;
+  }
+
+  .fmds-tab{
+    font-size:12px;
+    padding:10px 8px;
+  }
+
+}
+
 /* ================= CONTENT ================= */
 
 .content{
@@ -388,6 +436,26 @@ iframe{
 
   </div>
 
+<!-- FMDS SUB MENU -->
+<div class="fmds-submenu" id="fmdsSubmenu">
+
+  <div class="fmds-tab active"
+       onclick="loadFMDS('PEOPLE_HEALTH',event)">
+    PEOPLE & HEALTH
+  </div>
+
+  <div class="fmds-tab"
+       onclick="loadFMDS('SAFETY_REPORT',event)">
+    SAFETY REPORT
+  </div>
+
+  <div class="fmds-tab"
+       onclick="loadFMDS('ACTIVITY_ISSUE',event)">
+    ACTIVITY & ISSUE
+  </div>
+
+</div>
+
   <!-- MOBILE MENU -->
   <div class="mobile-top-menu">
 
@@ -439,7 +507,7 @@ iframe{
 /* ================= REPORTS ================= */
 
 const desktopReports = {
-  FMDS: "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_cc2qalhs2d?rm=minimal",
+  FMDS: "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_nqbrbssp4d?rm=minimal",
   MANPOWER: "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_qaljahgf2d?rm=minimal",
   EQUIPMENT: "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/T8WsF?rm=minimal",
   LIGHT_VEHICLE: "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_g8y1zsg51d?rm=minimal",
@@ -455,6 +523,19 @@ const mobileReports = {
   LIGHT_VEHICLE: "https://datastudio.google.com/embed/reporting/1c7ad7e4-1951-42c6-8437-8de21fb054e6/page/p_g8y1zsg51d?rm=minimal",
   WEEKLY_ACTIVITY: "https://datastudio.google.com/embed/reporting/1c7ad7e4-1951-42c6-8437-8de21fb054e6/page/p_sas31h1v3d?rm=minimal",
   MONTHLY_ACTIVITY: "https://datastudio.google.com/embed/reporting/1c7ad7e4-1951-42c6-8437-8de21fb054e6/page/p_kpjruo821d?rm=minimal"
+};
+
+const fmdsReports = {
+
+  PEOPLE_HEALTH:
+  "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_nqbrbssp4d?rm=minimal",
+
+  SAFETY_REPORT:
+  "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_bs1dvntp4d?rm=minimal",
+
+  ACTIVITY_ISSUE:
+  "https://datastudio.google.com/embed/reporting/a52e122c-a264-428e-bd04-e961fe178c90/page/p_zkcx1otp4d?rm=minimal"
+
 };
 
 /* ================= SYSTEM ================= */
@@ -476,7 +557,8 @@ function getCurrentReportURL(menu){
 /* INIT */
 window.addEventListener("load", function(){
 
-  loadReport(currentMenu);
+  loadReport("FMDS");
+  loadFMDS("PEOPLE_HEALTH");
 
 });
 
@@ -484,6 +566,23 @@ window.addEventListener("load", function(){
 function loadReport(menu, event=null){
 
   currentMenu = menu;
+
+  if(menu==="FMDS"){
+
+  document
+    .getElementById("fmdsSubmenu")
+    .classList.remove("hide");
+
+loadFMDS("PEOPLE_HEALTH");
+
+}
+else{
+
+  document
+    .getElementById("fmdsSubmenu")
+    .classList.add("hide");
+
+}
 
   document.getElementById("spinner").style.display = "block";
 
@@ -510,6 +609,23 @@ document.getElementById("reportFrame").onload = function(){
   document.getElementById("spinner").style.display = "none";
 
 };
+
+function loadFMDS(page,event=null){
+
+  document.getElementById("spinner").style.display = "block";
+
+  document.getElementById("reportFrame").src =
+      fmdsReports[page];
+
+  document
+    .querySelectorAll(".fmds-tab")
+    .forEach(i=>i.classList.remove("active"));
+
+  if(event){
+    event.target.classList.add("active");
+  }
+
+}
 
 /* DESKTOP SIDEBAR */
 function toggleSidebar(){
